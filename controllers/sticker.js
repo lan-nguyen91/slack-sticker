@@ -39,10 +39,10 @@ function * checkFileExist(arrayOfFiles, targetFile) {
   });
   return fileFound;
 }
-module.exports.getStickerByName = function * (){
-  let ctx         = this;
+
+function * getSticker(ctx, name){
   let files       = yield tfy(fs.readdir)('./uploads');
-  let query_split = ctx.params.name.split('-'); 
+  let query_split = name.split('-'); 
   let folder      = query_split[0]; 
   let stickerName = query_split[1];
 
@@ -53,12 +53,28 @@ module.exports.getStickerByName = function * (){
   else return yield response(ctx, 400, "your spelling sux bro !!! ");
 }
 
+module.exports.getStickerByName = function * (){
+  let ctx = this;
+  yield getSticker(ctx, ctx.params.name);
+}
+
 module.exports.home = function *(){
   return yield response(this, 200, "home page");
 }
 module.exports.slack = function *(){
-  console.log(this.request.body);
-  return yield response(this, 200, "home page");
+  /*{ token: 'lY27avweu62Cz8WWuEAkj4pa',
+  team_id: 'T02TG4M2T',
+  team_domain: 'gohart',
+  channel_id: 'D0B9K9DGX',
+  channel_name: 'directmessage',
+  user_id: 'U0B9PA14Z',
+  user_name: 'lan.nguyen',
+  command: '/sticker',
+  text: 'test',
+  response_url: 'https://hooks.slack.com/commands/T02TG4M2T/16547085697/5OVozJWlHTJIVMWlZRFoDDjc' }*/
+  let body = this.request.body;
+  if (body.token !== "lY27avweu62Cz8WWuEAkj4pa") return yield response(this, 400, "Intruder Go Away");
+  yield getSticker(this, body.text);
 }
 
 let response = function *(ctx, status, data){
