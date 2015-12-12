@@ -95,22 +95,22 @@ let response = function *(ctx, status, data){
       }
     } else {
       ctx.type   = 'application/json';
-      // construct a request 
+      // construct a request
       let options = {
         attachments : [{
           title     : data,
-          image_url : "http://www.bandai.com/powerrangers/megaforce/img/history-keyart-1993.png"
+          image_url : "ec2-54-233-93-42.sa-east-1.compute.amazonaws.com:3001/uploads/" + data;
         }]
       }
 
       // send response to response _url web hook
       let response = yield request({
-        url : body.response_url,
-        form : options 
+        url           : body.response_url,
+        response_type : "in_channel",
+        json          : options,
+        method        : "POST"
       });
 
-      console.log("response", response);
-      ctx.body = "";
     }
   } else {
     ctx.type   = 'application/json';
