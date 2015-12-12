@@ -99,7 +99,7 @@ let response = function *(ctx, status, data){
       let options = {
         attachments : [{
           title     : data,
-          image_url : "ec2-54-233-93-42.sa-east-1.compute.amazonaws.com:3001/uploads/" + data;
+          image_url : "ec2-54-233-93-42.sa-east-1.compute.amazonaws.com:3001/uploads/" + data
         }]
       }
 
