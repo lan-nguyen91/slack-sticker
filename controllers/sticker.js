@@ -97,6 +97,7 @@ let response = function *(ctx, status, data){
       ctx.type   = 'application/json';
       // construct a request
       let options = {
+        response_type : "in_channel",
         attachments : [{
           title     : data,
           image_url : "ec2-54-233-93-42.sa-east-1.compute.amazonaws.com:3001/uploads/" + data
@@ -105,8 +106,7 @@ let response = function *(ctx, status, data){
 
       // send response to response _url web hook
       let response = yield request({
-        url           : body.response_url,
-        response_type : "in_channel",
+        uri           : body.response_url,
         json          : options,
         method        : "POST"
       });
