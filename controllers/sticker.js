@@ -29,7 +29,7 @@ function * getAllFiles(folder){
 function * checkFileExist(arrayOfFiles, targetFile) {
   let basename, extension, fileFound = false;
   _.each(arrayOfFiles, function(file){
-    extension = path.extname(file) || null;
+    extension = path.extname(file) || "";
     basename  = path.basename(file, extension) || null;
 
     if (targetFile === basename ) {
@@ -43,10 +43,12 @@ function * checkFileExist(arrayOfFiles, targetFile) {
 function * getSticker(ctx, name){
   let files       = yield tfy(fs.readdir)('./uploads');
   let query_split = name.split('-'); 
+  
+  if (query_split.length !== 2) return yield response(ctx, 400, "your spelling sux bro !!!");
   let folder      = query_split[0]; 
   let stickerName = query_split[1];
 
-  if (!_.includes(yield getFolders(), folder)) return yield response(ctx, 400, null, "your spelling sux bro !!! ");
+  if (!_.includes(yield getFolders(), folder)) return yield response(ctx, 400, "your spelling sux bro !!! ");
   let imageFile = yield checkFileExist(yield getAllFiles(folder), stickerName );
 
   if (imageFile) return yield response(ctx, 200, folder + '/' + imageFile);
@@ -73,8 +75,9 @@ module.exports.slack = function *(){
   text: 'test',
   response_url: 'https://hooks.slack.com/commands/T02TG4M2T/16547085697/5OVozJWlHTJIVMWlZRFoDDjc' }*/
   let body = this.request.body;
+  console.log(body.token);
   if (body.token !== "lY27avweu62Cz8WWuEAkj4pa") return yield response(this, 400, "Intruder Go Away");
-  yield getSticker(this, body.text);
+  else return yield getSticker(this, body.text);
 }
 
 let response = function *(ctx, status, data){
