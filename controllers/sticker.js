@@ -96,11 +96,9 @@ let response = function *(ctx, status, data){
     } else {
       ctx.type   = 'application/json';
       ctx.body = {
-        text : data,
-        response_type: "in_channel",
         attachments : [{
+          title     : data,
           image_url : "http://www.bandai.com/powerrangers/megaforce/img/history-keyart-1993.png"
-          //image_url : 'http://ec2-54-233-93-42.sa-east-1.compute.amazonaws.com:3001/uploads/' + data,
         }]
       }
     }
