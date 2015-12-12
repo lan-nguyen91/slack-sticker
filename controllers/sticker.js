@@ -57,6 +57,7 @@ module.exports.home = function *(){
   return yield response(this, 200, "home page");
 }
 module.exports.slack = function *(){
+  console.log(this.request.body);
   return yield response(this, 200, "home page");
 }
 
