@@ -95,7 +95,7 @@ let response = function *(ctx, status, data){
       ctx.type   = 'application/json';
       ctx.body = {
         text : data,
-        image_url : 'http://ec2-54-233-93-42.sa-east-1.compute.amazonaws.com/uploads/' + data,
+        image_url : 'http://ec2-54-233-93-42.sa-east-1.compute.amazonaws.com:3001/uploads/' + data,
       }
     }
   } else {
