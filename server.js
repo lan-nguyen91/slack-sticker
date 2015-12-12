@@ -13,7 +13,7 @@ let path  = require('path');
 let app        = new koa();
 app.use(bodyParser());
 app.use(logger());
-
+app.use(serve(__dirname + '/public'));
 
 let sticker    = require('./controllers/sticker');
 let stickerRouter = new router()

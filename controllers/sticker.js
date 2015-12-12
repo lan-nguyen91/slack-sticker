@@ -4,6 +4,8 @@ let tfy = require('thenify');
 let _   = require('lodash');
 let path = require('path');
 
+const uploadFolder = __dirname + '/../public/uploads'
+
 module.exports.post = function * (){
   let ctx = this;
   ctx.body = "post";
@@ -12,17 +14,17 @@ module.exports.post = function * (){
 module.exports.list = function * (){
   let ctx = this;
   ctx.body = "list";
-  let files = yield tfy(fs.readdir)('./uploads');
+  let files = yield tfy(fs.readdir)(uploadFolder);
   return yield response(ctx, 200, null, files);
 }
 
 function * getFolders(){
-  let folders = yield tfy(fs.readdir)('./uploads');
+  let folders = yield tfy(fs.readdir)(uploadFolder);
   return folders;
 }
 
 function * getAllFiles(folder){
-  let files = yield tfy(fs.readdir)('./uploads/' + folder);
+  let files = yield tfy(fs.readdir)(uploadFolder + "/" + folder);
   return files;
 }
 
@@ -33,7 +35,7 @@ function * checkFileExist(arrayOfFiles, targetFile) {
     basename  = path.basename(file, extension) || null;
 
     if (targetFile === basename ) {
-      fileFound = file; 
+      fileFound = file;
       return;
     }
   });
@@ -41,11 +43,11 @@ function * checkFileExist(arrayOfFiles, targetFile) {
 }
 
 function * getSticker(ctx, name){
-  let files       = yield tfy(fs.readdir)('./uploads');
-  let query_split = name.split('-'); 
-  
+  let files       = yield tfy(fs.readdir)(uploadFolder);
+  let query_split = name.split('-');
+
   if (query_split.length !== 2) return yield response(ctx, 400, "your spelling sux bro !!!");
-  let folder      = query_split[0]; 
+  let folder      = query_split[0];
   let stickerName = query_split[1];
 
   if (!_.includes(yield getFolders(), folder)) return yield response(ctx, 400, "your spelling sux bro !!! ");
@@ -75,7 +77,6 @@ module.exports.slack = function *(){
   text: 'test',
   response_url: 'https://hooks.slack.com/commands/T02TG4M2T/16547085697/5OVozJWlHTJIVMWlZRFoDDjc' }*/
   let body = this.request.body;
-  console.log(body.token);
   if (body.token !== "lY27avweu62Cz8WWuEAkj4pa") return yield response(this, 400, "Intruder Go Away");
   else return yield getSticker(this, body.text);
 }
@@ -91,8 +92,11 @@ let response = function *(ctx, status, data){
         attachments : []
       }
     } else {
-      ctx.type = type;
-      ctx.body   = fs.createReadStream('./uploads/' + data); 
+      ctx.type   = 'application/json';
+      ctx.body = {
+        text : data,
+        image_url : 'http://ec2-54-233-93-42.sa-east-1.compute.amazonaws.com/uploads/' + data,
+      }
     }
   } else {
     ctx.type   = 'application/json';
