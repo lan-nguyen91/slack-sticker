@@ -42,8 +42,8 @@ function * checkFileExist(arrayOfFiles, targetFile) {
 module.exports.getStickerByName = function * (){
   let ctx         = this;
   let files       = yield tfy(fs.readdir)('./uploads');
-  let query_split = ctx.params.name.split('-');
-  let folder      = query_split[0];
+  let query_split = ctx.params.name.split('-'); 
+  let folder      = query_split[0]; 
   let stickerName = query_split[1];
 
   if (!_.includes(yield getFolders(), folder)) return yield response(ctx, 400, null, "your spelling sux bro !!! ");
