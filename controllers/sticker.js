@@ -3,6 +3,7 @@ let fs = require('fs');
 let tfy = require('thenify');
 let _   = require('lodash');
 let path = require('path');
+let request = require('koa-request');
 
 const uploadFolder = __dirname + '/../public/uploads'
 
@@ -82,8 +83,7 @@ module.exports.slack = function *(){
 }
 
 let response = function *(ctx, status, data){
-  var body = ctx.request.body || null;
-  console.log('http://ec2-54-233-93-42.sa-east-1.compute.amazonaws.com:3001/uploads/' + data)
+  let body = ctx.request.body || null;
   if (status == 200) {
     ctx.status = status;
     let type   = path.extname(data) || 'application/json';
@@ -95,12 +95,22 @@ let response = function *(ctx, status, data){
       }
     } else {
       ctx.type   = 'application/json';
-      ctx.body = {
+      // construct a request 
+      let options = {
         attachments : [{
           title     : data,
           image_url : "http://www.bandai.com/powerrangers/megaforce/img/history-keyart-1993.png"
         }]
       }
+
+      // send response to response _url web hook
+      let response = yield request({
+        url : body.response_url,
+        form : options 
+      });
+
+      console.log("response", response);
+      ctx.body = "";
     }
   } else {
     ctx.type   = 'application/json';
