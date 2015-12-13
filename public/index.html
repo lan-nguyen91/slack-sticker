@@ -2,7 +2,8 @@
 <html lang="en" ng-app="stickerApp">
 <head>
 	<meta charset="UTF-8">
-	<title>Document</title>
+	<title>Sticker Store</title>
+	<link href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzU2OREVGP8bGB1/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHxpWP9DOTeaMCQe/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIV5cP98Y0//dmFO/2xZSf9xYVb/yMvPQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALOXe/+phWD/pYxw/6GDaf+Xel//f2pX/3liVP+HgIHqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABq4v//Xdz+/3qHlP+Calf/lnhc/31mU/99YlD/j3Vv/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAduj+/2fc/P9a4v7/auj//y81Pv9NPjL/X05E/9fu/awAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9P3+SnXm/v927P//boeT/2xdS/8yNzv/Pj1F/1h4lf9+1Pr9AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAL+wn/+7m3n/s41m/0u57/8+t/D/LS0t/yub2f+AcHH/vef7qAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACD5v3/aOT+/2Tj/f9Ow/X/QbPo/z6u6v9Nv/L/IW2v/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYLff/1/P/P+eqrH/NVNt/7q5u/80j8r/Tabf/3bA8v8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbKXO/zhzlv/X2tb/q62t/05ipf/h6+n/yszL/yZDX//f4uT/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJLt//937f//cuv//5KUlP8eIy3/xc3N/0teif9MXZ//VmmA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADX+//afvD//37x//9X1Pz/VJjF/2WKm/+Hh4z/0NrY/6qqq/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJvx//9z1ef/bej//1bc/P9Y2Pv/TLXr/9Xj6vUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/xckO1fb5/2irvf9y4/3/dd38/77b5pEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlJmeXb3Dxg4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/38AAP4/AAD8HwAA+AcAAPgHAAD4BwAA+AcAAPAHAADwDwAA8A8AAOAPAADgDwAA4A8AAPAfAAD4PwAA//8AAA==" rel="icon" type="image/x-icon" />
 	<link rel="stylesheet" href="/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/css/flat-ui.min.css">
 	<style>
@@ -55,11 +56,12 @@
 	        <div class="col-md-9 col-lg-9 col-sm-12 col-xs-12">
 	            <div class="panel-group" id="accordion" ng-controller="stickers">
 	                <div class="panel panel-default" ng-repeat="collection in collections">
-	                    <div class="panel-heading">
+	                    <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#{{collection.name}}" ng-click="getStickers(collection.name, $index)">
 	                        <h4 class="panel-title">
 					        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#{{collection.name}}" ng-click="getStickers(collection.name, $index)" id="{{collection.name}}button">
 					          {{collection.name}}
-					        </a>		      
+					        </a>
+					        <a class="fui-triangle-down pull-right" href="#{{collection.name}}" ng-click="getStickers(collection.name, $index)" data-toggle="collapse"></a>		      
 					      </h4>
 	                    </div>
 	                    <div id="{{collection.name}}" class="panel-collapse collapse">
