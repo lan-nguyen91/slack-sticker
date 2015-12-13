@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="stickerApp">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/flat-ui.min.css">
+	<style>
+		* {
+			font-family: Lato, serif;
+		}
+
+		#container{
+			margin: 60px;
+			background: url(/img/background.jpg) no-repeat;
+			background-size: 100%;
+			-webkit-box-shadow: 6px 6px 19px 1px rgba(0,0,0,0.75);
+			-moz-box-shadow: 6px 6px 19px 1px rgba(0,0,0,0.75);
+			box-shadow: 6px 6px 19px 1px rgba(0,0,0,0.75);
+		}
+
+		#container > .row {
+			padding: 40px;
+		}
+
+		.modal {
+		  	text-align: center;
+		}
+
+		@media screen and (min-width: 768px) { 
+		  .modal:before {
+		    display: inline-block;
+		    vertical-align: middle;
+		    content: " ";
+		    height: 100%;
+		  }
+		}
+
+		.modal-dialog {
+		  display: inline-block;
+		  text-align: left;
+		  vertical-align: middle;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="container-fluid" id="container">
+	    <div class="row">
+	        <div class="demo-headline">
+	            <h1 class="demo-logo" style="color:#2C3E50;">
+	          		Sticker Store
+	        	</h1>
+	        </div>
+	        <div class="col-md-9 col-lg-9 col-sm-12 col-xs-12">
+	            <div class="panel-group" id="accordion" ng-controller="stickers">
+	                <div class="panel panel-default" ng-repeat="collection in collections">
+	                    <div class="panel-heading">
+	                        <h4 class="panel-title">
+					        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#{{collection.name}}" ng-click="getStickers(collection.name, $index)" id="{{collection.name}}button">
+					          {{collection.name}}
+					        </a>		      
+					      </h4>
+	                    </div>
+	                    <div id="{{collection.name}}" class="panel-collapse collapse">
+	                        <div class="panel-body">
+	                            <div class="row">
+	                                <div class="col-md-2 col-xs-4 text-center" ng-repeat="sticker in collection.data">
+	                                    <div class="thumbnail clearfix">
+	                                        <img ng-src="/uploads/{{collection.name}}/{{sticker}}" height="70px" width="70px">
+	                                        <span class="fui-trash pull-right" ng-click="deleteImage(collection.name, sticker)"></span>
+	                                    </div>
+	                                    <div class="caption">
+	                                        <p> <b> {{collection.name}}-{{sticker.split('.')[0]}} </b> </p>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12" ng-controller="Action">
+	            <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+	                <div class="modal-dialog">
+	                    <div class="modal-content">
+	                        <div class="modal-body">
+	                            <div class="row">
+	                                <div class="col-xs-12">
+	                                	<p class="text-danger">{{saveError}}</p>
+	                                    <div class="form-group has-info">
+	                                        <input type="text" value="" placeholder="Your new collection name" class="form-control" ng-model="new_collection" />
+	                                        <span class="input-icon fui-check-inverted"></span>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="modal-footer">
+	                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	                            <button type="button" class="btn btn-primary" ng-click="saveCollection()">Save changes</button>
+	                        </div>
+	                    </div>
+	                    <!-- /.modal-content -->
+	                </div>
+	                <!-- /.modal-dialog -->
+	            </div>
+	            <form class="form-horizontal">
+	            	<p class="text-danger">{{error}}</p>
+	                <div class="form-group">
+	                    <div class="col-md-10 col-sm-12 col-xs-12">
+	                        <select class="form-control" ng-model="selectCollection">
+	                            <option value="">Choose a collection</option>
+	                            <option ng-repeat="collection in collections" value="{{selectCollection=collection.name}}"> {{collection.name}}</option>
+	                        </select>
+	                    </div>
+	                    <a ng-click="addCollection()">
+	                        <label class="col-sm-2 control-label" style="color:white"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+	                        </label>
+	                    </a>
+	                </div>
+
+	                <div class="form-group">
+	                    <div class="col-md-10 col-sm-12 col-xs-12">
+	                        <input ng-model="stickerName" type="text" class="form-control" id="inputPassword3" placeholder="ex : 'smile' ">
+	                    </div>
+	                    <label for="inputEmail3" class="col-sm-2 control-label" style="color:white">name</label>
+	                </div>
+	                <div class="form-group">
+	                    <div class="col-md-10 col-sm-12 col-xs-12">
+	                        <input ng-model="stickerUrl" type="text" class="form-control" id="text" placeholder="url to image">
+	                    </div>
+	                    <label for="inputEmail3" class="col-sm-2 control-label" style="color:white">url</label>
+	                </div>
+	                <div class="form-group">
+	                    <div class="col-md-10 col-sm-12">
+	                        <button class="btn btn-success btn-block" ng-click="createSticker()">Create Sticker</button>
+	                    </div>
+	                </div>
+	            </form>
+	        </div>
+	    </div>
+	</div>
+
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/angular.min.js"></script>
+	<script src="/js/lodash.min.js"></script>
+	<script>
+		var urls = {
+			listCollections : "/listCollections",
+			listStickers  	: "/listStickers",
+			uploadImage 	: "/upload",
+			uploadUrl		: "/uploadUrl",
+			saveCollection	: "/saveCollection",
+			deleteImage		: "/deleteImage"
+		}
+		var stickerApp = angular.module('stickerApp', []);
+
+		stickerApp.controller('stickers', function ($scope, $http, $rootScope) {
+
+			$scope.refresh = function(){
+				$http.get(urls.listCollections).then(function(response){
+		  		$scope.collections = [];
+
+		  		// loop through each collection and set accordion
+		  		_.each(response.data.text, function(collection, index){
+			  			if(collection === '.DS_Store') {
+			  				return;
+			  				response.data.text.splice(index, 1);
+			  			}
+			  			$scope.collections.push({
+			  				name : collection,
+			  				data : []
+			  			})
+			  		})
+			  	});
+			}
+
+			$scope.refresh();
+			// on load get all collections of sticker
+		  	
+
+		  	$scope.getStickers = function(collection, index){
+		  		$http.get(urls.listStickers + "/" + collection).then(function(response){
+			  		// get all the sticker in the collection
+			  		$scope.collections[index]['data'] = response.data.text; 
+			  	});
+		  	}
+
+		  	$rootScope.$on('collectionadded', function(event, args){
+		  		$scope.refresh();
+		  	});
+
+		  	$rootScope.$on('stickeradded', function(event, args){
+		  		var index = _.findIndex($scope.collections, function(col) {
+				  return col.name == args.collection;
+				});
+				$scope.refresh();
+		  	});
+
+		  	$scope.deleteImage = function(collection, sticker){
+		  		$http.delete(urls.deleteImage + "/" + collection + "/" + sticker).then(function(response){
+		  			if(response.data.text == "removed"){
+		  				var index = _.findIndex($scope.collections, function(col) {
+						  return col.name == collection;
+						});
+
+						_.remove($scope.collections[index]['data'], function(stick) {
+						   return stick == sticker;
+						});
+		  			}
+		  		})
+		  	}
+		});
+
+		stickerApp.controller('Action', function ($scope, $http, $timeout, $rootScope) {
+
+
+			$scope.refresh = function(){
+				// on load get all collections of sticker
+			  	$http.get(urls.listCollections).then(function(response){
+			  		$scope.collections = [];
+
+			  		// loop through each collection and set accordion
+			  		_.each(response.data.text, function(collection, index){
+			  			if(collection === '.DS_Store') {
+			  				return;
+			  				response.data.text.splice(index, 1);
+			  			}
+			  			$scope.collections.push({
+			  				name : collection,
+			  				data : []
+			  			})
+			  		})
+			  	});
+			}
+			$scope.refresh();
+
+		  	$scope.createSticker = function(){
+		  		$scope.error = null;
+		  		if(!$scope.selectCollection) $scope.error = "Please Select A Collection Or add one";
+		  		if(!$scope.stickerName) $scope.error = "Please type in sticker name";
+		  		if(!$scope.stickerUrl) $scope.error = "Please type in sticker url";
+
+		  		if ($scope.error) return;
+
+		  		$http.post(urls.uploadUrl, {
+		  			name : $scope.selectCollection + '-' + $scope.stickerName,
+		  			uri  : $scope.stickerUrl
+		  		}).then(function(response){
+		  			if(response.data.text.toLowerCase() == "saved"){
+		  				$timeout(function() {
+		  					if(!angular.element('#'+$scope.selectCollection).hasClass('in'))
+		  						angular.element('#'+$scope.selectCollection+"button").trigger('click');
+		  				}, 100);
+		  				$rootScope.$broadcast('stickeradded', {collection : $scope.selectCollection, sticker : $scope.stickerName});
+		  			}
+		  		})
+		  	}
+
+		  	$scope.addCollection = function(){
+		  		angular.element('#myModal').modal('show');
+		  	}
+
+		  	$scope.saveCollection = function(){
+		  		$scope.saveError = null;
+		  		if(!$scope.new_collection) $scope.saveError = "Missing Collection Name";
+
+		  		if ($scope.saveError) return;
+
+		  		$http.post(urls.saveCollection, { name : $scope.new_collection}).then(function(response){
+	  				$scope.saveError = response.data.text;
+	  				if(response.data.text.toLowerCase() == "saved") {
+	  					$scope.collections.push({
+		  					name : $scope.new_collection,
+		  					data : []
+		  				});
+		  				$rootScope.$broadcast('collectionadded');
+	  				}
+
+		  		});
+		  	}
+		});
+	</script>
+</body>
+</html>

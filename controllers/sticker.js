@@ -12,11 +12,37 @@ module.exports.post = function * (){
   ctx.body = "post";
 }
 
-module.exports.list = function * (){
+module.exports.saveCollection = function * (){
   let ctx = this;
-  ctx.body = "list";
-  let files = yield tfy(fs.readdir)(uploadFolder);
-  return yield response(ctx, 200, null, files);
+  let folders = yield getFolders(uploadFolder);
+  if(_.includes(folders, ctx.request.body.name)) return yield response(ctx, 200, "Existed");
+  else {
+   let folder = fs.mkdirSync(uploadFolder + '/' + ctx.request.body.name); 
+   if (fs.existsSync(uploadFolder + '/' + ctx.request.body.name)) return yield response(ctx, 200, "Saved");
+   else return yield response(ctx, 200, "Fail to save!")
+  }
+}
+
+module.exports.deleteImage = function * (){
+  let ctx = this;
+  let folder = ctx.params.collection;
+  let sticker = ctx.params.sticker;
+
+  fs.unlinkSync(uploadFolder + '/' + folder + '/' + sticker);
+  if (!fs.existsSync(uploadFolder + '/' + folder + '/' + sticker)) return yield response(ctx, 200, "removed");
+  else return yield response(ctx, 400, "Fail to remove");
+}
+
+module.exports.listCollections = function * (){
+  let ctx = this;
+  let folders = yield getFolders();
+  return yield response(ctx, 200, folders);
+}
+
+module.exports.listStickers = function * (){
+  let ctx = this;
+  let files = yield getAllFiles(ctx.params.collection);
+  return yield response(ctx, 200, files);
 }
 
 function * getFolders(){
@@ -121,7 +147,7 @@ let response = function *(ctx, status, data){
   if (status == 200) {
     ctx.status = status;
     let type   = path.extname(data) || 'none';
-    if (type == 'none') {
+    if (type == 'none' || _.isArray(data)) {
       ctx.type = type;
       ctx.body = {
         text : data,

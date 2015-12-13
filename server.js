@@ -50,9 +50,12 @@ app.use(function *(next){
 });
 
 stickerRouter.post('/uploadUrl', sticker.getImageUrl);
+stickerRouter.post('/saveCollection', sticker.saveCollection);
+stickerRouter.delete('/deleteImage/:collection/:sticker', sticker.deleteImage);
 stickerRouter.get('/', sticker.home);
 stickerRouter.post('/', sticker.slack);
-stickerRouter.get('/sticker/list', sticker.list);
+stickerRouter.get('/listCollections', sticker.listCollections);
+stickerRouter.get('/listStickers/:collection', sticker.listStickers);
 stickerRouter.get('/sticker/:name', sticker.getStickerByName);
 stickerRouter.post('/sticker', sticker.post);
 
