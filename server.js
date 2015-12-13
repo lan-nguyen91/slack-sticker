@@ -49,7 +49,7 @@ app.use(function *(next){
   else yield next;
 });
 
-//stickerRouter.post('/upload', sticker.upload);
+stickerRouter.post('/uploadUrl', sticker.getImageUrl);
 stickerRouter.get('/', sticker.home);
 stickerRouter.post('/', sticker.slack);
 stickerRouter.get('/sticker/list', sticker.list);

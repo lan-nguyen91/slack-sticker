@@ -58,6 +58,40 @@ function * getSticker(ctx, name){
   else return yield response(ctx, 400, "your spelling sux bro !!! ");
 }
 
+module.exports.getImageUrl = function * (){
+  let ctx  = this;
+  let uri  = ctx.request.body.uri;
+  let name = ctx.request.body.name;
+
+  let res = yield request({
+    uri : uri,
+    encoding: 'binary',
+    method : "GET"
+  });
+
+  if (res.body) {
+    let query_split = name.split('-');
+
+    if (query_split.length !== 2) return yield response(ctx, 400, "your spelling sux bro !!!");
+    let folder      = query_split[0];
+    let stickerName = query_split[1];
+
+    let type = res.headers['content-type'].split('/')[1];
+    if (!_.includes(['png', 'jpg', 'jpeg', 'gif'], type.toLowerCase()))
+      return yield response(ctx, 400, "Invalid Type");
+    // if not exist, create the folder
+    if (!fs.existsSync(uploadFolder + '/' + folder)) {
+      fs.mkdirSync(uploadFolder + '/' + folder);
+    }
+   
+    let fileDestination = uploadFolder + '/' + folder + '/' + stickerName + '.' + type;
+    //write binary to file
+    yield tfy(fs.writeFile)(fileDestination, res.body, 'binary');
+    if (fs.existsSync(fileDestination)) return yield response(ctx, 200, "Saved");
+    else return yield response(ctx, 400, "Fail To Save");
+  }
+}
+
 module.exports.getStickerByName = function * (){
   let ctx = this;
   yield getSticker(ctx, ctx.params.name);
@@ -86,12 +120,11 @@ let response = function *(ctx, status, data){
   let body = ctx.request.body || null;
   if (status == 200) {
     ctx.status = status;
-    let type   = path.extname(data) || 'application/json';
-    if (type == 'application/json') {
+    let type   = path.extname(data) || 'none';
+    if (type == 'none') {
       ctx.type = type;
       ctx.body = {
         text : data,
-        attachments : []
       }
     } else {
       ctx.type   = 'application/json';
